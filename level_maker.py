@@ -16,9 +16,6 @@ class LevelMaker:
         initial_size = max(400, self.n * 30)
         self.root.geometry(f"{initial_size}x{initial_size+60}")
 
-        # Enable keep_square AFTER initial render
-        self.root.after(50, lambda: self.root.bind("<Configure>", self.keep_square))
-
         # GRID FRAME
         self.grid_frame = tk.Frame(self.root)
         self.grid_frame.pack(fill="both", expand=True)
@@ -26,6 +23,9 @@ class LevelMaker:
         # Canvas inside the frame
         self.canvas = tk.Canvas(self.grid_frame, bg="white")
         self.canvas.pack(fill="both", expand=True)
+
+        # Keep square
+        self.canvas.bind("<Configure>", self.keep_square)
 
         # Canvas resizing handler
         self.canvas.bind("<Configure>", self.on_resize)
@@ -36,8 +36,14 @@ class LevelMaker:
         tk.Button(btn_frame, text="Export Grid", command=self.export_grid).pack(side="left", padx=5)
         tk.Button(btn_frame, text="Clear All", command=self.clear_grid).pack(side="left", padx=5)
 
-        # Click to toggle cells
-        self.canvas.bind("<Button-1>", self.on_click)
+        # DRAWING 
+        self.canvas.bind("<Button-1>", self.on_press)
+        self.canvas.bind("<B1-Motion>", self.on_drag)
+        self.canvas.bind("<ButtonRelease-1>", self.on_release)
+
+        self.is_drawing = False
+        self.already_toggled = set()
+        self.draw_value = None
 
         self.draw_grid()
         self.root.mainloop()
@@ -46,10 +52,20 @@ class LevelMaker:
         self.canvas.delete("all")
 
         cell = self.cell_size
+
+        canvas_w = self.canvas.winfo_width()
+        canvas_h = self.canvas.winfo_height()
+
+        grid_px = cell * self.n
+
+        # Center offsets
+        offset_x = (canvas_w - grid_px) / 2
+        offset_y = (canvas_h - grid_px) / 2
+
         for i in range(self.n):
             for j in range(self.n):
-                x1 = j * cell
-                y1 = i * cell
+                x1 = offset_x + j * cell
+                y1 = offset_y + i * cell
                 x2 = x1 + cell
                 y2 = y1 + cell
 
@@ -60,28 +76,84 @@ class LevelMaker:
                     fill=fill, outline="gray"
                 )
 
+    def event_to_cell(self, event):
+        """Convert mouse coordinates to (row, col) respecting centered grid"""
+        cell = self.cell_size
+
+        canvas_w = self.canvas.winfo_width()
+        canvas_h = self.canvas.winfo_height()
+        grid_px = cell * self.n
+
+        offset_x = (canvas_w - grid_px) / 2
+        offset_y = (canvas_h - grid_px) / 2
+
+        # Adjust event coordinates
+        x = event.x - offset_x
+        y = event.y - offset_y
+
+        # Ignore clicks outside the grid
+        if x < 0 or y < 0 or x >= grid_px or y >= grid_px:
+            return None, None
+
+        j = int(x // cell)
+        i = int(y // cell)
+        return i, j
+
+
     def on_resize(self, event):
         """ Resize grid based on cavnas size"""
+        # ignore garbage events during fullscreen transition
+        if event.width <= 1 or event.height <= 1:
+            return  
+    
         # Determine new square side
         size = min(event.width, event.height)
         self.cell_size = size / self.n
         self.draw_grid()
 
     def keep_square(self, event):
-        """ keep window square"""
-        if event.widget is self.root:
+        """Keep ONLY the canvas square — NOT the whole window"""
+        if event.widget is self.canvas:
             size = min(event.width, event.height)
-            self.root.geometry(f"{size}x{size+60}")  
-            # +60 = button height
+            self.canvas.config(width=size, height=size)
 
-    def on_click(self, event):
-        """ mouse click toggles action """
+
+    def on_press(self, event):
+        self.is_drawing = True
+        self.already_toggled = set()
+
+        # determine drawing mode: 1 = draw, 0 = erase
         j = int(event.x // self.cell_size)
         i = int(event.y // self.cell_size)
 
         if 0 <= i < self.n and 0 <= j < self.n:
-            self.grid[i][j] ^= 1
-            self.draw_grid()
+            self.draw_value = 0 if self.grid[i][j] == 1 else 1
+
+        self._apply_brush(event)
+
+
+    def on_drag(self, event):
+        """Toggle cells as you drag across them."""
+        if self.is_drawing:
+            self._apply_brush(event)
+
+    def on_release(self, event):
+        self.is_drawing = False
+        self.already_toggled = set()
+        self.draw_value = None
+
+    def _apply_brush(self, event):
+        i, j = self.event_to_cell(event)
+        if i is None:    # click outside grid
+            return
+
+        if 0 <= i < self.n and 0 <= j < self.n:
+            cell_id = (i, j)
+            if cell_id not in self.already_toggled:
+                self.grid[i][j] = self.draw_value 
+                self.already_toggled.add(cell_id)
+                self.draw_grid()
+
 
     def export_grid(self):
         base_dir = os.path.abspath(os.path.dirname(__file__))
