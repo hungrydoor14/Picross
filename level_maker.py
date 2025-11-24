@@ -123,8 +123,9 @@ class LevelMaker:
         self.already_toggled = set()
 
         # determine drawing mode: 1 = draw, 0 = erase
-        j = int(event.x // self.cell_size)
-        i = int(event.y // self.cell_size)
+        i, j = self.event_to_cell(event)
+        if i is None:
+            return
 
         if 0 <= i < self.n and 0 <= j < self.n:
             self.draw_value = 0 if self.grid[i][j] == 1 else 1
@@ -138,6 +139,7 @@ class LevelMaker:
             self._apply_brush(event)
 
     def on_release(self, event):
+        """ reset the toggles to keep on drawing """
         self.is_drawing = False
         self.already_toggled = set()
         self.draw_value = None
