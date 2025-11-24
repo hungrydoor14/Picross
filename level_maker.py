@@ -159,8 +159,7 @@ class LevelMaker:
 
     def export_grid(self):
         base_dir = os.path.abspath(os.path.dirname(__file__))
-        save_dir = os.path.join(base_dir, "levels")
-
+        save_dir = os.path.join(base_dir, "backend", "levels")
         os.makedirs(save_dir, exist_ok=True)
 
         save_path = os.path.join(save_dir, f"grids_{self.n}.json")

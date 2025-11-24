@@ -33,13 +33,18 @@ class PicrossGrid:
         grid_id: int
         n: grid size (5, 10, 15, 20, etc.)
         """
+        # get absolute project root (folder that contains backend/)
         base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        
+        # backend/levels/
         levels_dir = os.path.join(base_dir, "levels")
+        
+        # backend/levels/grids_10.json
         file_path = os.path.join(levels_dir, f"grids_{n}.json")
 
         if not os.path.exists(file_path):
-            raise FileNotFoundError(f"No premade grids found for size {n}.")
-
+            raise FileNotFoundError(f"No level file found: {file_path}")
+        
         # load the JSON list
         with open(file_path, "r") as f:
             data = json.load(f)
