@@ -1,8 +1,16 @@
 import random
+import json, os
 
 class PicrossGrid:
     """
     This class is meant to create the functionality for the picross grid.
+
+    Difficulty thought process:
+        Easy: either 7x7 or 10x10
+        Medium: 15x15
+        Hard: 20x20
+        Expert(?): 30x30
+
     """
 
     def make_grid(n):
@@ -17,7 +25,37 @@ class PicrossGrid:
 
         return grid
     
+    def make_premade_grid(id, n):
+        """
+        Loads a premade grid by ID from grids_{n}.json
+        and returns it as a 2D array of 1s/0s.
+
+        grid_id: int
+        n: grid size (5, 10, 15, 20, etc.)
+        """
+        base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        levels_dir = os.path.join(base_dir, "levels")
+        file_path = os.path.join(levels_dir, f"grids_{n}.json")
+
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"No premade grids found for size {n}.")
+
+        # load the JSON list
+        with open(file_path, "r") as f:
+            data = json.load(f)
+
+        # find the grid with matching ID
+        for entry in data:
+            if entry["id"] == id:
+                return entry["grid"]
+
+        raise ValueError(f"Grid with id {id} not found for size {n}.")
+    
     def visualize_key_grid(grid, filled="■ ", empty=". "):
+        """
+        Given an array grid and the optional visualization characters, it will show you on the
+        terminal how it would look
+        """
         n = len(grid)
 
         for i in range(n):
