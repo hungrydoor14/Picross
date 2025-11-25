@@ -1,0 +1,84 @@
+.picross-container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 10px;
+  width: fit-content;
+  margin: auto;
+}
+
+/* Empty corner */
+.corner {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
+/* Column clues on top */
+.column-clues {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+
+  display: grid;
+  grid-template-columns: repeat(var(--size), 1fr);
+  justify-items: center;
+}
+
+.clue-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Row clues on left */
+.row-clues {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+
+  display: grid;
+  grid-template-rows: repeat(var(--size), 1fr);
+  align-items: center;
+}
+
+.clue-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.clue-number {
+  font-size: 12px;
+  color: white;
+}
+
+/* Puzzle grid */
+.board {
+  width: 70vmin;
+  height: 70vmin;
+  display: grid;
+  border: 1px solid #444;
+}
+
+
+.cell {
+  border: 1px solid #555;
+  background: white;
+}
+
+.cell.filled {
+  background: black;
+}
+
+.cell.x-mark {
+  background: #cccccc; /* light gray */
+}
+
+.cell.x-mark::after {
+  color: #555;
+  font-weight: bold;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
