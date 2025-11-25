@@ -84,7 +84,7 @@ export default function Play() {
 
             {won && (
                 <div className="win-banner">
-                    🎉 YOU WIN!!! 🎉
+                    YOU WIN!!!
                 </div>
             )}
         </div>

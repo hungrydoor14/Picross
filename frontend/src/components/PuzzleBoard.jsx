@@ -12,8 +12,19 @@ export default function PuzzleBoard({ size, solution, rowClues, colClues, onWin 
 
   useEffect(() => {
     const solved = grid.every((row, r) =>
-      row.every((cell, c) => cell === solution[r][c])
-    );
+      row.every((cell, c) => {
+        const target = solution[r][c];
+
+        // Filled cell must match exactly:
+        if (target === 1) return cell === 1;
+
+        // Empty cell in solution: allow either empty or X
+        if (target === 0) return cell === 0 || cell === 2;
+
+        return false;
+      })
+);
+
     if (solved) onWin();
   }, [grid, solution, onWin]);
 
