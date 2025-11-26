@@ -24,3 +24,25 @@
   margin-bottom: 0.1rem;
 }
 
+
+/* banner shit */
+.support-banner {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  background-color: #2f2f2f;
+  font-size: 1rem;
+  color: #aaa;
+  opacity: 0.8;
+}
+
+.support-banner a {
+  color: #4cafeb;
+  text-decoration: underline;
+}
+
+.support-banner a:hover {
+  color: #80c6ff;
+}
+

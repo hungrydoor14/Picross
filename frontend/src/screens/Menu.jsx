@@ -53,6 +53,14 @@ const goPremade = () => {
           Left click to fill a cell, right click to mark a cell as empty. <br/>
           Complete the grid according to the numbers on the top and left sides.
         </div>
+
+        <div className="support-banner">
+          Support me here:{" "}
+          <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">
+            Click me
+          </a>
+        </div>
+
     </div>
   );
 }

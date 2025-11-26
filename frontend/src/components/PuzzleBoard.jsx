@@ -163,25 +163,27 @@ export default function PuzzleBoard({ size, solution, rowClues, colClues, onWin 
         onMouseLeave={handleMouseUp}
         onContextMenu={(e) => e.preventDefault()}
       >
-        {grid.map((row, r) =>
-          row.map((cell, c) => (
-            <div
-              key={`${r}-${c}`}
-              className={`cell 
-                ${cell === 1 ? "filled" : ""} 
-                ${cell === 2 ? "x-mark" : ""}
-              `}
-              draggable={false}
-              onDragStart={(e) => e.preventDefault()}
+        {grid.map((row, r) => (
+          <div className="row" key={r}>
+            {row.map((cell, c) => (
+              <div
+                key={`${r}-${c}`}
+                className={`cell 
+                  ${cell === 1 ? "filled" : ""} 
+                  ${cell === 2 ? "x-mark" : ""}
+                `}
+                draggable={false}
+                onDragStart={(e) => e.preventDefault()}
+                onMouseDown={(e) => {
+                  if (e.button === 0) handleMouseDown(r, c);
+                }}
+                onContextMenu={(e) => handleRightClick(r, c, e)}
+                onMouseEnter={() => handleMouseEnter(r, c)}
+              />
+            ))}
+          </div>
+        ))}
 
-              onMouseDown={(e) => {
-                if (e.button === 0) handleMouseDown(r, c);
-              }}
-              onContextMenu={(e) => handleRightClick(r, c, e)}
-              onMouseEnter={() => handleMouseEnter(r, c)}
-            />
-          ))
-        )}
       </div>
     </div>
   );

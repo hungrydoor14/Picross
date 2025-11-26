@@ -53,14 +53,20 @@
 
 /* Puzzle grid */
 .board {
+  display: flex;
+  flex-direction: column;
   width: 70vmin;
   height: 70vmin;
-  display: grid;
   border: 1px solid #444;
 }
 
+.row {
+  display: flex;
+  flex: 1;     /* equal height rows */
+}
 
 .cell {
+  flex: 1;              /* equal width cells */
   border: 1px solid #555;
   background: white;
 }
@@ -80,5 +86,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* thicker vertical line every 5 cols */
+.row .cell:nth-child(5n) {
+  border-right: 3px solid rgb(0, 0, 0);
+}
+
+/* thicker horizontal line every 5 rows */
+.row:nth-child(5n) .cell {
+  border-bottom: 3px solid rgb(0, 0, 0);
 }
 
