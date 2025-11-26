@@ -27,7 +27,7 @@ const goPremade = () => {
       <h1 className="title">Picross</h1>
 
       <div className="difficulty-section">
-        <label>Difficulty:</label>
+        <label>Difficulty: </label>
         <select
           value={difficulty}
           onChange={(e) => setDifficulty(e.target.value)}
@@ -38,7 +38,7 @@ const goPremade = () => {
           <option value="extreme">Extreme (30x30)</option>
         </select>
       </div>
-
+        <div></div>
         <div className="menu-buttons">
                 <button className="menu-btn" onClick={goRandom}>
                     Random Puzzle
@@ -47,6 +47,11 @@ const goPremade = () => {
                 <button className="menu-btn" onClick={goPremade}>
                     Premade Puzzle
                 </button>
+        </div>
+        <div classname="instructions">
+          <h2>How to play:</h2>
+          Left click to fill a cell, right click to mark a cell as empty. <br/>
+          Complete the grid according to the numbers on the top and left sides.
         </div>
     </div>
   );

@@ -1,0 +1,26 @@
+.menu-container {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.difficulty-section {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.difficulty-section {
+  margin-bottom: 1rem;  
+}
+
+.menu-buttons {
+  display: flex;
+  gap: 0.5rem;   /* space between items */
+  margin-bottom: 0.1rem;
+}
+

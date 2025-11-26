@@ -1,3 +1,5 @@
+import "./Play.css";
+
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PuzzleBoard from "../components/PuzzleBoard";
@@ -65,28 +67,35 @@ export default function Play() {
 
     return (
         <div className="play-container">
-            <button onClick={() => navigate("/")}>← Back</button>
-
             <h2>
                 {type === "random"
                     ? "Random Puzzle"
                     : `Premade Puzzle ID: ${puzzle.id}`}
             </h2>
 
-            <PuzzleBoard
-                key={puzzle.id} // forces fresh Board
-                size={puzzle.grid.length}
-                solution={puzzle.grid}
-                rowClues={rowClues}
-                colClues={colClues}
-                onWin={() => setWon(true)}
-            />
+            <button onClick={() => navigate("/")}>← Back</button>
 
-            {won && (
-                <div className="win-banner">
-                    YOU WIN!!!
-                </div>
-            )}
+            <div>
+
+                <PuzzleBoard
+                    key={puzzle.id} // forces fresh Board
+                    size={puzzle.grid.length}
+                    solution={puzzle.grid}
+                    rowClues={rowClues}
+                    colClues={colClues}
+                    onWin={() => setWon(true)}
+                />
+
+                {won && (
+                    <div className="modal-overlay">
+                        <div className="modal-box">
+                            <h2>You Win!</h2>
+                            <button onClick={() => navigate("/")}>Return to Menu</button>
+                        </div>
+                    </div>
+                )}
+
+            </div>
         </div>
     );
 }
