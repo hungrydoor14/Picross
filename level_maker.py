@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox
 import json, os
 
+from tkinter import filedialog
+from PIL import Image, ImageOps, ImageFilter, ImageEnhance
+
 class LevelMaker:
     def __init__(self, n=10):
         self.n = n
@@ -35,6 +38,7 @@ class LevelMaker:
         btn_frame.pack(pady=10)
         tk.Button(btn_frame, text="Export Grid", command=self.export_grid).pack(side="left", padx=5)
         tk.Button(btn_frame, text="Clear All", command=self.clear_grid).pack(side="left", padx=5)
+        tk.Button(btn_frame, text="Import Image", command=self.import_image).pack(side="left", padx=5)
 
         # DRAWING 
         self.canvas.bind("<Button-1>", self.on_press)
@@ -220,6 +224,43 @@ class LevelMaker:
         """ clear grid if it is too bad to just manually refresh """
         self.grid = [[0 for _ in range(self.n)] for _ in range(self.n)]
         self.draw_grid()
+
+
+        
+    def import_image(self):
+        path = filedialog.askopenfilename(
+            filetypes=[("Image files", "*.png *.jpg *.jpeg *.bmp *.gif")]
+        )
+        if not path:
+            return
+
+        try:
+            img = Image.open(path)
+
+            # PREPROCESS
+            img = ImageOps.grayscale(img)
+            img = img.filter(ImageFilter.SHARPEN)
+
+            enhancer = ImageEnhance.Contrast(img)
+            img = enhancer.enhance(2.0)
+
+            # RESIZE to NxN
+            img = img.resize((self.n, self.n))
+
+            pixels = img.load()
+
+            # Build new grid
+            new_grid = [
+                [1 if pixels[x, y] < 128 else 0 for x in range(self.n)]
+                for y in range(self.n)
+            ]
+
+            self.grid = new_grid
+            self.draw_grid()
+            messagebox.showinfo("Import Success", "Imported image and converted to grid!")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to import image:\n{e}")
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -1,3 +1,6 @@
 *.ipynb
 venv/
 __pycache__
+buildenv
+*.spec
+dist/
